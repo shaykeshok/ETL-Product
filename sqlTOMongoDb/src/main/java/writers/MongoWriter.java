@@ -1,4 +1,4 @@
-package sqlTOMongoDb;
+package writers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +9,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
-public class MongoWriter implements Writer{
+public class MongoWriter extends Mongo {
 	private MongoClient mongo;
 	private DB db;
 	private DBCollection table;
@@ -23,9 +23,8 @@ public class MongoWriter implements Writer{
 		mongo = new MongoClient("localhost",27017);
 		db = mongo.getDB(dbName);
 		table = db.getCollection(collection);
-
 	}
-
+	
 	public void write(List<HashMap<String, Object>> data) {
 		for (int i = 0; i < data.size(); i++) {
 			BasicDBObject document = new BasicDBObject();
@@ -38,10 +37,4 @@ public class MongoWriter implements Writer{
 
 		}
 	}
-
-	@Override
-	public void close() {
-		mongo.close();
-	}
-
 }

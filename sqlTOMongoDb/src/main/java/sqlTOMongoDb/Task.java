@@ -3,6 +3,13 @@ package sqlTOMongoDb;
 import java.util.HashMap;
 import java.util.List;
 
+import readers.Reader;
+import readers.ReaderFactory;
+import transformer.Transformer;
+import transformer.TransformersFactory;
+import writers.Writer;
+import writers.WriterFactory;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -19,6 +26,8 @@ public class Task implements Runnable {
 
 	public void run() {
 		try {
+			if (taskName.equals("timer"))
+				timer();
 			HashMap<String, Object> conf = readFromMongo(taskName);
 			System.out.println(conf);
 			Reader reader = ReaderFactory.create(conf);
@@ -30,16 +39,29 @@ public class Task implements Runnable {
 			while (reader.hasNext()) {
 				List<HashMap<String, Object>> data = reader.next();
 				System.out.println(data.size());
-				if (trans!=null)
-					data = trans.transform(data,conf);
+				if (trans != null)
+					data = trans.transform(data, conf);
 				writer.write(data);
 			}
+				
 			reader.close();
 			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("failed to do task:"+taskName);
+			System.out.println("failed to do task:" + taskName);
 		}
+	}
+
+	//1) with what you know.
+	//2) Executors
+	//3) Scheduler
+	private void timer() {
+		long realTime = System.currentTimeMillis() + 1800000;
+		while (realTime != System.currentTimeMillis()) {
+			// wait/sleep
+		}
+		new Thread(new Task("copyDeltaPolicies")).start();
+		timer();
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
@@ -59,8 +81,12 @@ public class Task implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new Task("sqlPoliciesToMongo").run();
-		//new Task("sqlUpdateToMongo").run();
+		// new Task("sqlPoliciesToMongo").run();
+		// new Task("sqlUpdateToMongo").run();
+		//new Thread(new Task("timer")).start();	
+	
+		
+		
 		
 	}
 }

@@ -1,10 +1,9 @@
-package sqlTOMongoDb;
+package writers;
 
 import java.util.HashMap;
 import java.util.List;
 
 public interface Writer {
-
 
 	void write(List<HashMap<String, Object>> data);
 

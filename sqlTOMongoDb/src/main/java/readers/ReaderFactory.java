@@ -1,5 +1,4 @@
-package sqlTOMongoDb;
-
+package readers;
 import java.util.HashMap;
 
 public class ReaderFactory {

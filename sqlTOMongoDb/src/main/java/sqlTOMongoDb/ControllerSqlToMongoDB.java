@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,11 +53,17 @@ public class ControllerSqlToMongoDB {
 		}
 	}
 
-	@RequestMapping("/doTask")
-	public String doTask(@RequestParam(value = "taskName") String taskName) {
+	@RequestMapping("/doTask/{taskName}")
+	public String doTask(@PathVariable(value = "taskName") String taskName,
+			@RequestParam Map<String, Object> allparams) {
 		new Thread(new Task(taskName)).start();	
 		return "Task:"+taskName+" is run";
 		 
+	}
+	
+	@RequestMapping("/startDeltaPolicies")
+	public void startDeltaPolicies() {
+		new Thread(new Task("timer")).start();					 
 	}
 	
 	@RequestMapping("/getFromSQL")

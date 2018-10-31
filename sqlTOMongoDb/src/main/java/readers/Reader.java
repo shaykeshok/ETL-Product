@@ -1,4 +1,4 @@
-package sqlTOMongoDb;
+package readers;
 
 import java.util.HashMap;
 import java.util.Iterator;

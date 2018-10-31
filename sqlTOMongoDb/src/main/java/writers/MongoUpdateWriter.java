@@ -1,22 +1,18 @@
-package sqlTOMongoDb;
+package writers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOneModel;
-import com.mongodb.client.model.WriteModel;
 
-public class MongoUpdateWriter implements Writer {
+public class MongoUpdateWriter extends Mongo {
 	private MongoClient mongo;
 	private MongoDatabase db;
 	private MongoCollection<Document> table;
@@ -50,11 +46,6 @@ public class MongoUpdateWriter implements Writer {
 			
 		}
 		table.bulkWrite(requests);
-	}
-
-	@Override
-	public void close() {
-		mongo.close();
 	}
 
 }

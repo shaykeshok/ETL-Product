@@ -1,4 +1,4 @@
-package sqlTOMongoDb;
+package writers;
 
 import java.util.HashMap;
 

@@ -1,18 +1,18 @@
-package sqlTOMongoDb;
+package transformer;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class AddFieldTrans implements Transformer {
+public class RenameFieldTrans implements Transformer {
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
+	@Override
 	public List<HashMap<String, Object>> transform(List<HashMap<String, Object>> data, HashMap<String, Object> conf) {
 		conf = (HashMap<String, Object>) conf.get("transforms");
-		String fieldName=(String) conf.get("fieldName");
-		String fieldValue=(String)conf.get("fieldValue");
 		for (int i = 0; i < data.size(); i++) {
-			data.get(i).put(fieldName,fieldValue );
+			data.get(i).put((String) conf.get("newfieldName"), data.get(i).remove(conf.get("fieldToRename")));
 		}
 		return data;
 	}
+
 }
