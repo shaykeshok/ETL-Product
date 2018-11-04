@@ -87,8 +87,8 @@ public class Task implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		 new Task("mongoStreetsToMongo").run();
-		// new Task("sqlUpdateToMongo").run();
+		new Task("mongoStreetsToMongo").run();
+		// new Task("sqlPoliciesToMongo").run();
 		//new Thread(new Task("timer")).start();	
 	
 		

@@ -9,7 +9,7 @@ public class WriterFactory {
 		HashMap<String, Object> target = (HashMap<String, Object>) conf.get("target");
 		String writerType = (String) target.get("class");
 		System.out.println(writerType);
-		Writer w= (Writer) Class.forName("sqlTOMongoDb."+writerType).newInstance();
+		Writer w= (Writer) Class.forName("writers."+writerType).newInstance();
 		return w;
 	}
 	

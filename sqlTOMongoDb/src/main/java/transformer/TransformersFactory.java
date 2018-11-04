@@ -10,7 +10,7 @@ public class TransformersFactory {
 		HashMap<String, Object> transforms = (HashMap<String, Object>) conf.get("transforms");
 		String TransformerType = (String) transforms.get("class");
 		System.out.println(TransformerType);
-		Transformer t= (Transformer) Class.forName("sqlTOMongoDb."+TransformerType).newInstance();
+		Transformer t= (Transformer) Class.forName("transformer."+TransformerType).newInstance();
 		return t;
 	}
 	

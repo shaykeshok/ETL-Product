@@ -9,7 +9,7 @@ public class ReaderFactory {
 		HashMap<String, Object> source = (HashMap<String, Object>) conf.get("source");
 		String readerType = (String) source.get("class");
 		System.out.println(source);
-		Reader r = (Reader) Class.forName("sqlTOMongoDb." + readerType).newInstance();
+		Reader r = (Reader) Class.forName("readers." + readerType).newInstance();
 		return r;
 	}
 }
