@@ -2,6 +2,9 @@ package sqlTOMongoDb;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import readers.Reader;
 import readers.ReaderFactory;
@@ -53,16 +56,19 @@ public class Task implements Runnable {
 	}
 
 	//1) with what you know.
-	//2) Executors
-	//3) Scheduler
-	private void timer() {
-		long realTime = System.currentTimeMillis() + 1800000;
-		while (realTime != System.currentTimeMillis()) {
-			// wait/sleep
-		}
+	//2) Scheduler
+	private void timer() throws InterruptedException {
+		wait(1800000);
 		new Thread(new Task("copyDeltaPolicies")).start();
 		timer();
 	}
+	
+	private void timer2(){
+		 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	      scheduler.scheduleAtFixedRate(new Task("copyDeltaPolicies"), 0, 30, TimeUnit.MINUTES);
+	        
+	}
+	
 
 	@SuppressWarnings({ "deprecation", "resource" })
 	private HashMap<String, Object> readFromMongo(String taskName) {
