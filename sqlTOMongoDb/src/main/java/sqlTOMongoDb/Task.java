@@ -34,7 +34,7 @@ public class Task implements Runnable {
 			HashMap<String, Object> conf = readFromMongo(taskName);
 			System.out.println(conf);
 			Reader reader = ReaderFactory.create(conf);
-			Transformer trans = TransformersFactory.create(conf);
+			//Transformer trans = TransformersFactory.create(conf);
 			Writer writer = WriterFactory.create(conf);
 
 			reader.init(conf);
@@ -42,8 +42,8 @@ public class Task implements Runnable {
 			while (reader.hasNext()) {
 				List<HashMap<String, Object>> data = reader.next();
 				System.out.println(data.size());
-				if (trans != null)
-					data = trans.transform(data, conf);
+			//	if (trans != null)
+			//		data = trans.transform(data, conf);
 				writer.write(data);
 			}
 				
