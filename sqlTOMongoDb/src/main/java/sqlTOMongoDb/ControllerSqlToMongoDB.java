@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import readers.MongoReader;
+import readers.Reader;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -64,6 +67,11 @@ public class ControllerSqlToMongoDB {
 	@RequestMapping("/startDeltaPolicies")
 	public void startDeltaPolicies() {
 		new Thread(new Task("timer")).start();					 
+	}
+	
+	@RequestMapping("/getApiWeb")
+	public void getApiWeb(@RequestParam(value = "tblname") String tblname){
+		
 	}
 	
 	@RequestMapping("/getFromSQL")

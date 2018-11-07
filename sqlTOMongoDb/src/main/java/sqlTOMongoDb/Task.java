@@ -54,8 +54,6 @@ public class Task implements Runnable {
 		}
 	}
 
-	//1) with what you know.
-	//2) Scheduler
 	private void timer(long delay,String task) throws InterruptedException {
 		while(true) {
 		Thread.sleep(delay);
