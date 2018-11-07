@@ -19,6 +19,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
+
 public class Task implements Runnable {
 
 	private String taskName;
@@ -29,12 +30,10 @@ public class Task implements Runnable {
 
 	public void run() {
 		try {
-			if (taskName.equals("timer"))
-				timer();
 			HashMap<String, Object> conf = readFromMongo(taskName);
 			System.out.println(conf);
 			Reader reader = ReaderFactory.create(conf);
-			//Transformer trans = TransformersFactory.create(conf);
+			Transformer trans = TransformersFactory.create(conf);
 			Writer writer = WriterFactory.create(conf);
 
 			reader.init(conf);
@@ -42,8 +41,8 @@ public class Task implements Runnable {
 			while (reader.hasNext()) {
 				List<HashMap<String, Object>> data = reader.next();
 				System.out.println(data.size());
-			//	if (trans != null)
-			//		data = trans.transform(data, conf);
+				if (trans != null)
+					data = trans.transform(data, conf);
 				writer.write(data);
 			}
 				
@@ -57,13 +56,14 @@ public class Task implements Runnable {
 
 	//1) with what you know.
 	//2) Scheduler
-	private void timer() throws InterruptedException {
-		wait(1800000);
-		new Thread(new Task("copyDeltaPolicies")).start();
-		timer();
+	private void timer(long delay,String task) throws InterruptedException {
+		while(true) {
+		Thread.sleep(delay);
+		new Thread(new Task(task)).start();
+		}
 	}
 	
-	private void timer2(){
+	private void timer2(long delay,String task){
 		 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	      scheduler.scheduleAtFixedRate(new Task("copyDeltaPolicies"), 0, 30, TimeUnit.MINUTES);
 	        

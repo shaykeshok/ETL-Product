@@ -28,7 +28,12 @@ public class SqlReader implements Reader {
 		String query = (String) conf.get("query");
 		backupResultSet=true;
 		try {
-			// Class.forName(driverClass);
+			if (driverClass!=null)
+				try {
+					Class.forName(driverClass);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
 			con = DriverManager.getConnection(connectionString);
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(query);
