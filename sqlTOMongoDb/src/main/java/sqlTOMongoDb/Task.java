@@ -38,6 +38,7 @@ public class Task implements Runnable {
 			HashMap<String, Object> conf = readFromMongo(taskName);
 			System.out.println(conf);
 			DBObjectUtil.fixJson(conf, new ConfJsonFieldFixer(params), "");
+			conf.put("params", params);
 			Reader reader = ReaderFactory.create(conf);
 			Transformer trans = TransformersFactory.create(conf);
 			Writer writer = WriterFactory.create(conf);

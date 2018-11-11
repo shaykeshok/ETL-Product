@@ -50,9 +50,15 @@ public class DBObjectUtil {
 		}
 	}
 
-	public static Object getInnerField(String substring, Map<String, Object> params) {
+	public static Object getInnerField(String substring, Map<String, Object> data) {
 	
-		return null;
+		String[] split = substring.split("[.]");
+		for (int i = 0; i < split.length; i++) {
+			if (data == null || !(data instanceof Map<?, ?>))
+				return null;
+			data = (Map<String, Object>) data.get(split[i]);
+		}
+		return data;
 	}
 
 }
