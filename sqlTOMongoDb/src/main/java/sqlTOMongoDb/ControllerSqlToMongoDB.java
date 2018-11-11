@@ -15,15 +15,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import readers.MongoReader;
-import readers.Reader;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+
+import ch.qos.logback.classic.Logger;
 
 @RestController
 public class ControllerSqlToMongoDB {
@@ -59,31 +59,43 @@ public class ControllerSqlToMongoDB {
 	@RequestMapping("/doTask/{taskName}")
 	public String doTask(@PathVariable(value = "taskName") String taskName,
 			@RequestParam Map<String, Object> allparams) {
-		new Thread(new Task(taskName)).start();	
-		return "Task:"+taskName+" is run";
-		 
+		new Thread(new Task(taskName)).start();
+		return "Task:" + taskName + " is run";
+
 	}
-	
+
 	@RequestMapping("/startDeltaPolicies")
 	public void startDeltaPolicies() {
-		new Thread(new Task("timer")).start();					 
+		new Thread(new Task("timer")).start();
 	}
-	
-	@RequestMapping("/getApiWeb")
-	public void getApiWeb(@RequestParam(value = "tblname") String tblname){
+
+	@RequestMapping("/apiWeb/{apiName}")
+	public @ResponseBody String apiWeb(@PathVariable String apiName, 
+			@RequestParam Map<String, Object> params) {
 		
+		HashMap<String, Object> task = Task.readFromMongo(apiName);
+		if (task == null) {
+			HashMap<String, Object> hashMap = new HashMap<>();
+			hashMap.put("error", "No Configuration For " + apiName);
+			LOGGER.info("");
+			return hashMap.toString();
+		}
+		if (params == null)
+			params = new HashMap<>();
+		if (task.get("source") != null)
+			new Task(apiName, params).run();
+
+		return params.get(Fields.result).toString();
 	}
-	
+
 	@RequestMapping("/getFromSQL")
-	public String getFromSQL(
-			@RequestParam(value = "tablename", defaultValue = "msp") String tablename) {
+	public String getFromSQL(@RequestParam(value = "tablename", defaultValue = "msp") String tablename) {
 
 		HashMap<String, Object> innerMap = new HashMap<>();
 		List<HashMap<String, Object>> lst = new ArrayList<HashMap<String, Object>>();
 		String ans = "success";
 
-		try (Connection con = DriverManager.getConnection(CONNECTIONURL);
-				Statement stmt = con.createStatement();) {
+		try (Connection con = DriverManager.getConnection(CONNECTIONURL); Statement stmt = con.createStatement();) {
 
 			String SQL = "SELECT * FROM " + tablename;
 			ResultSet rs = stmt.executeQuery(SQL);
@@ -99,7 +111,7 @@ public class ControllerSqlToMongoDB {
 
 				innerMap = new HashMap<>();
 				countrow++;
-				if (countrow % 100 == 0){
+				if (countrow % 100 == 0) {
 					insertMongoDB(lst, tablename);
 					lst = new ArrayList<HashMap<String, Object>>();
 				}

@@ -2,9 +2,16 @@ package sqlTOMongoDb;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
 
 import readers.Reader;
 import readers.ReaderFactory;
@@ -13,25 +20,24 @@ import transformer.TransformersFactory;
 import writers.Writer;
 import writers.WriterFactory;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
-
-
 public class Task implements Runnable {
-
+	private Map<String, Object> params;
 	private String taskName;
 
 	public Task(String task) {
 		this.taskName = task;
 	}
 
+	public Task(String taskName, Map<String, Object> parameters) {
+		this.taskName = taskName;
+		this.params = parameters;
+	}
+
 	public void run() {
 		try {
 			HashMap<String, Object> conf = readFromMongo(taskName);
 			System.out.println(conf);
+			DBObjectUtil.fixJson(conf, new ConfJsonFieldFixer(params), "");
 			Reader reader = ReaderFactory.create(conf);
 			Transformer trans = TransformersFactory.create(conf);
 			Writer writer = WriterFactory.create(conf);
@@ -45,7 +51,7 @@ public class Task implements Runnable {
 					data = trans.transform(data, conf);
 				writer.write(data);
 			}
-				
+
 			reader.close();
 			writer.close();
 		} catch (Exception e) {
@@ -66,10 +72,9 @@ public class Task implements Runnable {
 	      scheduler.scheduleAtFixedRate(new Task("copyDeltaPolicies"), 0, 30, TimeUnit.MINUTES);
 	        
 	}
-	
 
 	@SuppressWarnings({ "deprecation", "resource" })
-	private HashMap<String, Object> readFromMongo(String taskName) {
+	public static HashMap<String, Object> readFromMongo(String taskName) {
 		MongoClient mongo = new MongoClient("localhost", 27017);
 		DB db = mongo.getDB("bdika");
 		DBCollection table = db.getCollection("tasks");
@@ -87,10 +92,7 @@ public class Task implements Runnable {
 	public static void main(String[] args) {
 		new Task("mongoStreetsToMongo").run();
 		// new Task("sqlPoliciesToMongo").run();
-		//new Thread(new Task("timer")).start();	
-	
-		
-		
-		
+		// new Thread(new Task("timer")).start();
+
 	}
 }
