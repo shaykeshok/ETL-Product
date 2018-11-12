@@ -2,6 +2,12 @@ package sqlTOMongoDb;
 
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+
 @SuppressWarnings("unused")
 public class ConfJsonFieldFixer implements JsonFieldFixer {
 
@@ -35,15 +41,18 @@ public class ConfJsonFieldFixer implements JsonFieldFixer {
 				indexOf = str.indexOf(par);
 
 			}
-			/*
-			 * indexOf = str.indexOf("+config."); while (indexOf >= 0) { int end =
-			 * str.indexOf("+", indexOf + 1); String key = str.substring(indexOf + 8, end);
-			 * Object globalProperty =
-			 * ConfigurationLoader.getInstance().getGlobalProperty(key); if (str.length() ==
-			 * end && indexOf == 0) return globalProperty; str = str.substring(0, indexOf) +
-			 * globalProperty + string.substring(end + 1); indexOf =
-			 * str.indexOf("+config."); }
-			 */
+
+			indexOf = str.indexOf("+config.");
+			while (indexOf >= 0) {
+				int end = str.indexOf("+", indexOf + 1);
+				String key = str.substring(indexOf + 8, end);
+				Object globalProperty = ConfigurationLoader.getInstance().getGlobalProperty(key);
+				if (str.length() == end && indexOf == 0)
+					return globalProperty;
+				str = str.substring(0, indexOf) + globalProperty + str.substring(end + 1);
+				indexOf = str.indexOf("+config.");
+			}
+
 			return str;
 		}
 		return object;
@@ -58,5 +67,20 @@ public class ConfJsonFieldFixer implements JsonFieldFixer {
 	public String fixKey(String string) {
 		return null;
 	}
+	
+	public Object getValue(String key){
+		MongoClient mongo = new MongoClient("localhost", 27017);
+		DB db = mongo.getDB("bdika");
+		DBCollection table = db.getCollection("config");
+		BasicDBObject searchQuery = new BasicDBObject();
+		searchQuery.put(Fields.id, key);
 
+		DBCursor cursor = table.find(searchQuery);
+		BasicDBObject next = null;
+		if (cursor.hasNext()) {
+			next = (BasicDBObject) cursor.next();
+		}
+		
+		return next.get(1); 
+	}
 }

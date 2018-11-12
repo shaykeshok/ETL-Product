@@ -13,6 +13,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
+import readers.MongoLineReader;
 import readers.Reader;
 import readers.ReaderFactory;
 import transformer.Transformer;
@@ -35,7 +36,8 @@ public class Task implements Runnable {
 
 	public void run() {
 		try {
-			HashMap<String, Object> conf = readFromMongo(taskName);
+			//HashMap<String, Object> conf = readFromMongo(taskName);
+			HashMap<String, Object> conf = MongoLineReader.readFromMongo(Fields.tasks, Fields.id, taskName, "bdika");
 			System.out.println(conf);
 			DBObjectUtil.fixJson(conf, new ConfJsonFieldFixer(params), "");
 			conf.put("params", params);
@@ -72,22 +74,6 @@ public class Task implements Runnable {
 		 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	      scheduler.scheduleAtFixedRate(new Task("copyDeltaPolicies"), 0, 30, TimeUnit.MINUTES);
 	        
-	}
-
-	@SuppressWarnings({ "deprecation", "resource" })
-	public static HashMap<String, Object> readFromMongo(String taskName) {
-		MongoClient mongo = new MongoClient("localhost", 27017);
-		DB db = mongo.getDB("bdika");
-		DBCollection table = db.getCollection("tasks");
-		BasicDBObject searchQuery = new BasicDBObject();
-		searchQuery.put("_id", taskName);
-
-		DBCursor cursor = table.find(searchQuery);
-		BasicDBObject next = null;
-		if (cursor.hasNext()) {
-			next = (BasicDBObject) cursor.next();
-		}
-		return next;
 	}
 
 	public static void main(String[] args) {
