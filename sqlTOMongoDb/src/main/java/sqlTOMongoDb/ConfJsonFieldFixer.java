@@ -46,7 +46,7 @@ public class ConfJsonFieldFixer implements JsonFieldFixer {
 			while (indexOf >= 0) {
 				int end = str.indexOf("+", indexOf + 1);
 				String key = str.substring(indexOf + 8, end);
-				Object globalProperty = ConfigurationLoader.getInstance().getGlobalProperty(key);
+				Object globalProperty = getValue(key);
 				if (str.length() == end && indexOf == 0)
 					return globalProperty;
 				str = str.substring(0, indexOf) + globalProperty + str.substring(end + 1);

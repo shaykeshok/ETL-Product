@@ -42,7 +42,7 @@ public class Task implements Runnable {
 			DBObjectUtil.fixJson(conf, new ConfJsonFieldFixer(params), "");
 			conf.put("params", params);
 			Reader reader = ReaderFactory.create(conf);
-			Transformer trans = TransformersFactory.create(conf);
+			//Transformer trans = TransformersFactory.create(conf);
 			Writer writer = WriterFactory.create(conf);
 
 			reader.init(conf);
@@ -50,8 +50,8 @@ public class Task implements Runnable {
 			while (reader.hasNext()) {
 				List<HashMap<String, Object>> data = reader.next();
 				System.out.println(data.size());
-				if (trans != null)
-					data = trans.transform(data, conf);
+				//if (trans != null)
+				//	data = trans.transform(data, conf);
 				writer.write(data);
 			}
 
@@ -77,7 +77,7 @@ public class Task implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new Task("mongoStreetsToMongo").run();
+		new Task("SqlIncremental").run();
 		// new Task("sqlPoliciesToMongo").run();
 		// new Thread(new Task("timer")).start();
 
