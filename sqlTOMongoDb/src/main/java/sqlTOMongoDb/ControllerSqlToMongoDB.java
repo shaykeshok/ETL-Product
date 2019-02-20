@@ -33,7 +33,7 @@ public class ControllerSqlToMongoDB {
 	public static final MongoClient mongo = new MongoClient("localhost", 27017);;
 	public DB db;
 	public DBCollection table;
-	private static final String CONNECTIONURL = "jdbc:sqlserver://192.168.57.31:1433;database=bnsgvia;user=epr;password=epr10";
+	//private static final String CONNECTIONURL = פרטים על השרת והDB;
 
 	@SuppressWarnings("deprecation")
 	public ControllerSqlToMongoDB() {
