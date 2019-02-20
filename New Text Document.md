@@ -1,4 +1,4 @@
- <img src="https://aimeos.org/fileadmin/template/icons/logo.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
+ 
 # Project Title
 
 One Paragraph of project description goes here
